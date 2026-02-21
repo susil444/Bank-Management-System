@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bank Management System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+    <title>🏦MyBank | Online Banking</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        /* Header & Navbar */
+        header {
+            background-color: #0a3d62;
+            color: white;
+            padding: 15px 30px;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h1 {
+            margin: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin-left: 20px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        /* Main content */
+        main {
+            padding: 40px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .balance {
+            color: #27ae60;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        /* Forms */
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 12px;
+            width: 100%;
+            background-color: #0a3d62;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #07507a;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a3d62;
+            color: white;
+            text-align: center;
+            padding: 15px;
+        }
+    </style>
+    </head>
+<body>
+
+<header>
+    <nav>
+        <h1>🏦MyBank</h1>
+        <ul>
+            <li><a href="#">Login</a></li>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Accounts</a></li>
+            <li><a href="#">Transactions</a></li>
+            <li><a href="#">Logout</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+<div class="row g-4">
+    <!-- Create Account -->
+    <div class="col-md-4">
+      <h4>Create Account</h4>
+      <input id="newName" class="form-control" placeholder="Name">
+      <input id="newDeposit" class="form-control my-2" type="number" placeholder="Initial Deposit">
+      <button class="btn btn-success" onclick="createAccount()">Create</button>
+    </div> <br> 
+    <br>
+
+    <!-- View Account -->
+    <div class="col-md-4">
+      <h4>View Account</h4>
+      <input id="viewId" class="form-control" placeholder="Account ID">
+      <input id="viewName" class="form-control" placeholder="Name">
+      <button class="btn btn-primary my-2" onclick="getAccount()">View</button>
+    </div> <br>
+    <br>
+
+    <!-- Deposit / Withdraw -->
+    <div class="col-md-4">
+      <h4>Deposit / Withdraw</h4>
+      <input id="transId" class="form-control" placeholder="Account ID">
+      <input id="transAmount" class="form-control my-2" type="number" placeholder="Amount">
+      <div class="d-flex gap-2">
+        <button class="btn btn-warning" onclick="deposit()">Deposit</button>
+        <button class="btn btn-danger" onclick="withdraw()">Withdraw</button>
+      </div>
+    </div>
+  </div> <br>
+  <br>
+   <!-- Result -->
+  <h4>📋 Result:</h4>
+  <pre id="result" class="bg-light p-3 border rounded"></pre>
+
+</main>
+
+<footer>
+    <p>© 2026 MyBank. All rights reserved.</p>
+</footer>
+
+<body class="container py-5">
+
+  
+
+  <hr class="my-5">
+
+  
+  <script>
+    const baseURL = 'http://localhost:8087/api/accounts';
+
+    function showResult(data) {
+      document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function createAccount() {
+      const name = document.getElementById('newName').value;
+      const deposit = document.getElementById('newDeposit').value;
+      const res = await fetch(`${baseURL}?name=${name}&initialDeposit=${deposit}`, { method: 'POST' });
+      const data = await res.json();
+      showResult(data);
+    }
+
+    async function getAccount() {
+      const id = document.getElementById('viewId').value;
+      const res = await fetch(`${baseURL}/${id}`);
+      if (res.status === 200) {
+        const data = await res.json();
+        showResult(data);
+      } else {
+        showResult({ error: "Account not found" });
+      }
+    }
+
+    async function deposit() {
+      const id = document.getElementById('transId').value;
+      const amount = document.getElementById('transAmount').value;
+      const res = await fetch(`${baseURL}/${id}/deposit?amount=${amount}`, { method: 'POST' });
+      const data = await res.json();
+      showResult(data);
+    }
+
+    async function withdraw() {
+      const id = document.getElementById('transId').value;
+      const amount = document.getElementById('transAmount').value;
+      const res = await fetch(`${baseURL}/${id}/withdraw?amount=${amount}`, { method: 'POST' });
+      const data = await res.json();
+      showResult(data);
+    }
+  </script>
+
+</body>
+</html>
